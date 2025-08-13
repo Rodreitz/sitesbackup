@@ -48,7 +48,7 @@
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div class="w-full max-w-md">
                     <header class="text-center mb-8">
-                        <img src="https://raw.githubusercontent.com/Rodreitz/sites/adab42e1b226613b95b484f00337e8c1903b186b/LOGO%20COM%20NOME%20transparente.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
+                        <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
                         <h1 class="font-display text-3xl text-brand-primary">Área Exclusiva</h1>
                         <p class="text-brand-text">Acesse a calculadora e outras ferramentas.</p>
                     </header>
@@ -80,7 +80,7 @@
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div class="w-full max-w-md">
                     <header class="text-center mb-8">
-                        <img src="https://raw.githubusercontent.com/Rodreitz/sites/adab42e1b226613b95b484f00337e8c1903b186b/LOGO%20COM%20NOME%20transparente.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
+                        <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
                         <h1 class="font-display text-3xl text-brand-primary">Crie sua Conta</h1>
                         <p class="text-brand-text">É rápido e fácil!</p>
                     </header>
@@ -105,11 +105,10 @@
                             Já tem uma conta? <a href="#" id="showLoginViewLink" class="font-medium text-brand-primary hover:underline">Faça o login</a>
                         </p>
                     </main>
-                </footer>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Seção do Aplicativo (Layout Principal) -->
     <div id="appView" class="hidden">
@@ -120,7 +119,7 @@
             <!-- Barra Lateral Retrátil -->
             <aside id="sidebar" class="bg-brand-bg text-brand-text w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-30">
                 <a href="#dashboard" class="nav-link text-white text-xl flex items-center px-4">
-                    <img src="https://raw.githubusercontent.com/Rodreitz/sites/adab42e1b226613b95b484f00337e8c1903b186b/LOGO%20COM%20NOME%20transparente.png" alt="Logo Arttes da Bel" class="w-32 h-auto mx-auto">
+                    <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="w-32 h-auto mx-auto">
                 </a>
                 <nav>
                     <a href="#dashboard" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-brand-primary hover:text-white bg-brand-primary/20">Página Inicial</a>
@@ -427,20 +426,52 @@
             let piecesCollectionRef = null;
             let atelierData = {};
 
+            // ===================================================================
+            // INÍCIO DO CÓDIGO MODIFICADO PARA O LOGIN (SESSÃO)
+            // ===================================================================
             onAuthStateChanged(auth, (user) => {
                 if (user) {
-                    currentUser = user;
-                    atelierDataRef = doc(db, "atelierData", currentUser.uid);
-                    piecesCollectionRef = collection(db, "atelierData", currentUser.uid, "pieces");
-                    authContainer.classList.add('hidden');
-                    appView.classList.remove('hidden');
-                    loadUserDataAndNavigate();
+                    // Utilizador está autenticado. Agora, vamos verificar se o acesso dele ainda é válido.
+                    const authorizedEmailRef = doc(db, "authorizedEmails", user.email);
+                    getDoc(authorizedEmailRef).then(docSnap => {
+                        if (docSnap.exists()) {
+                            const userData = docSnap.data();
+                            const expirationDate = userData.expirationDate.toDate();
+                            const now = new Date();
+
+                            if (now < expirationDate) {
+                                // O acesso está válido, carrega o aplicativo normalmente
+                                currentUser = user;
+                                atelierDataRef = doc(db, "atelierData", user.uid);
+                                piecesCollectionRef = collection(db, "atelierData", currentUser.uid, "pieces");
+                                authContainer.classList.add('hidden');
+                                appView.classList.remove('hidden');
+                                loadUserDataAndNavigate();
+                            } else {
+                                // O acesso expirou! Desconecta o utilizador e mostra uma mensagem.
+                                alert('Seu acesso expirou. Por favor, renove sua assinatura para continuar usando a ferramenta.');
+                                signOut(auth); // Desconecta o utilizador
+                            }
+                        } else {
+                            // Caso raro: utilizador registado mas não está na lista. Desconecta por segurança.
+                            alert('Não foi possível verificar sua autorização de acesso. Por favor, entre em contato com o suporte.');
+                            signOut(auth);
+                        }
+                    }).catch(error => {
+                        console.error("Erro ao verificar acesso do utilizador:", error);
+                        alert('Ocorreu um erro ao verificar seu status de acesso. Tente fazer login novamente.');
+                        signOut(auth);
+                    });
                 } else {
+                    // Utilizador não está autenticado, mostra a tela de login
                     currentUser = null;
                     authContainer.classList.remove('hidden');
                     appView.classList.add('hidden');
                 }
             });
+            // ===================================================================
+            // FIM DO CÓDIGO MODIFICADO
+            // ===================================================================
 
             const loginView = document.getElementById('loginView');
             const registerView = document.getElementById('registerView');
@@ -467,6 +498,9 @@
                     });
             });
 
+            // ===================================================================
+            // INÍCIO DO CÓDIGO MODIFICADO PARA O CADASTRO
+            // ===================================================================
             document.getElementById('registerForm').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const name = document.getElementById('registerName').value;
@@ -474,28 +508,53 @@
                 const password = document.getElementById('registerPassword').value;
                 const registerErrorDiv = document.getElementById('registerErrorMessage');
 
-                if (!name) {
-                    registerErrorDiv.textContent = 'Por favor, insira seu nome.';
+                if (!name || password.length < 6) {
+                    registerErrorDiv.textContent = !name ? 'Por favor, insira seu nome.' : 'A senha deve ter pelo menos 6 caracteres.';
                     registerErrorDiv.classList.remove('hidden');
                     return;
                 }
-                if (password.length < 6) {
-                    registerErrorDiv.textContent = 'A senha deve ter pelo menos 6 caracteres.';
-                    registerErrorDiv.classList.remove('hidden');
-                    return;
-                }
-                
-                createUserWithEmailAndPassword(auth, email, password)
-                    .then(async (userCredential) => {
-                        await updateProfile(userCredential.user, { displayName: name });
-                        await setDoc(doc(db, "atelierData", userCredential.user.uid), { name: name, hasLoggedInBefore: false }, { merge: true });
-                        alert("Cadastro realizado com sucesso!");
-                    })
-                    .catch((error) => {
-                        registerErrorDiv.textContent = error.code === 'auth/email-already-in-use' ? "Este email já está cadastrado." : "Ocorreu um erro ao cadastrar.";
+
+                const authorizedEmailRef = doc(db, "authorizedEmails", email);
+                getDoc(authorizedEmailRef).then((docSnap) => {
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        // Converte o Timestamp do Firestore para um objeto Date do JavaScript
+                        const expirationDate = userData.expirationDate.toDate(); 
+                        const now = new Date();
+
+                        // Verifica se a data atual é anterior à data de expiração
+                        if (now < expirationDate) {
+                            // O acesso é válido, pode criar a conta
+                            createUserWithEmailAndPassword(auth, email, password)
+                                .then(async (userCredential) => {
+                                    await updateProfile(userCredential.user, { displayName: name });
+                                    await setDoc(doc(db, "atelierData", userCredential.user.uid), { name: name, hasLoggedInBefore: false }, { merge: true });
+                                    alert("Cadastro realizado com sucesso!");
+                                    registerErrorDiv.classList.add('hidden');
+                                })
+                                .catch((error) => {
+                                    registerErrorDiv.textContent = error.code === 'auth/email-already-in-use' ? "Este email já está cadastrado. Tente fazer o login." : "Ocorreu um erro ao criar a sua conta.";
+                                    registerErrorDiv.classList.remove('hidden');
+                                });
+                        } else {
+                            // O acesso expirou
+                            registerErrorDiv.textContent = 'O seu acesso a esta ferramenta expirou. Por favor, renove a sua assinatura para se cadastrar.';
+                            registerErrorDiv.classList.remove('hidden');
+                        }
+                    } else {
+                        // O e-mail não foi encontrado na lista de autorizados
+                        registerErrorDiv.textContent = 'E-mail não autorizado. Por favor, utilize o mesmo e-mail que usou na sua compra na Hotmart.';
                         registerErrorDiv.classList.remove('hidden');
-                    });
+                    }
+                }).catch((error) => {
+                    console.error("Erro ao verificar autorização: ", error);
+                    registerErrorDiv.textContent = 'Ocorreu um erro ao verificar a permissão do seu e-mail. Tente novamente mais tarde.';
+                    registerErrorDiv.classList.remove('hidden');
+                });
             });
+            // ===================================================================
+            // FIM DO CÓDIGO MODIFICADO
+            // ===================================================================
             
             document.getElementById('logoutButton').addEventListener('click', () => {
                 signOut(auth).catch((error) => console.error("Erro ao sair:", error));
