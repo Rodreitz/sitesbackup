@@ -36,7 +36,8 @@
     </script>
     <style>
         body.loading #authContainer,
-        body.loading #appView {
+        body.loading #appView,
+        body.loading #legalContainer {
             display: none;
         }
         body:not(.loading) #loadingIndicator {
@@ -55,6 +56,27 @@
             cursor: not-allowed;
             opacity: 0.7;
         }
+        .legal-content h2 {
+            font-family: 'Montserrat', serif;
+            font-size: 1.5rem;
+            color: #786D4E;
+            margin-bottom: 1rem;
+        }
+        .legal-content h3 {
+            font-family: 'Montserrat', serif;
+            font-size: 1.25rem;
+            color: #786D4E;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .legal-content p, .legal-content li {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .legal-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+        }
     </style>
 </head>
 <body class="bg-brand-bg/50 text-brand-text loading">
@@ -63,7 +85,7 @@
         <div class="loader"></div>
     </div>
 
-    <div id="authContainer" class="hidden">
+    <div id="authContainer">
         <div id="emailStepView">
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div class="w-full max-w-md">
@@ -84,8 +106,10 @@
                     </main>
                     <footer class="text-center mt-8 text-sm text-gray-500">
                         <p>&copy; 2024 - Arttes da Bel</p>
-                        <p class="mt-2">
-                            <a href="#" class="hover:underline">Termos de Serviço</a> &bull; <a href="#" class="hover:underline">Política de Privacidade</a>
+                        <p class="mt-2 space-x-2">
+                            <a href="#terms" class="nav-link-legal hover:underline">Termos de Serviço</a> &bull; 
+                            <a href="#privacy" class="nav-link-legal hover:underline">Política de Privacidade</a> &bull;
+                            <a href="#support" class="nav-link-legal hover:underline">Suporte</a>
                         </p>
                     </footer>
                 </div>
@@ -156,6 +180,7 @@
                 </div>
             </div>
         </div>
+        <div id="legalContainer" class="hidden"></div>
     </div>
 
     <div id="appView" class="hidden">
