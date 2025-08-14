@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arttes da Bel - Ferramentas</title>
+    <title>Calculadora de Precificação Automática</title>
+    <link rel="icon" type="image/png" href="/assets/logo.png">
+    
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#DA7E55">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script>
         tailwind.config = {
             theme: {
@@ -28,35 +35,75 @@
         }
     </script>
     <style>
+        body.loading #authContainer,
+        body.loading #appView {
+            display: none;
+        }
+        body:not(.loading) #loadingIndicator {
+            display: none;
+        }
         .tooltip { position: relative; display: inline-block; }
         .tooltip .tooltiptext { visibility: hidden; width: 220px; background-color: #555; color: #fff; text-align: center; border-radius: 6px; padding: 5px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-size: 12px; font-family: 'Inter', sans-serif; }
         .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #DA7E55; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 20px auto; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #DA7E55; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .input-prefix { position: absolute; left: 0; top: 0; height: 100%; display: flex; align-items: center; padding-left: 0.75rem; color: #6b7280; }
         .input-group input { padding-left: 2.5rem; }
         .saved-status { transition: opacity 0.5s ease-in-out, color 0.3s; }
         #sidebar { transition: transform 0.3s ease-in-out; }
+        .btn-loading {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
     </style>
 </head>
-<body class="bg-brand-bg/50 text-brand-text">
+<body class="bg-brand-bg/50 text-brand-text loading">
 
-    <!-- Seção de Autenticação -->
-    <div id="authContainer">
-        <!-- Tela de Login -->
-        <div id="loginView">
+    <div id="loadingIndicator" class="flex items-center justify-center min-h-screen">
+        <div class="loader"></div>
+    </div>
+
+    <div id="authContainer" class="hidden">
+        <div id="emailStepView">
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div class="w-full max-w-md">
                     <header class="text-center mb-8">
                         <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
-                        <h1 class="font-display text-3xl text-brand-primary">Área Exclusiva</h1>
-                        <p class="text-brand-text">Acesse a calculadora e outras ferramentas.</p>
+                        <h1 class="font-display text-3xl text-brand-primary">Acesse sua Conta</h1>
+                        <p class="text-brand-text">Comece inserindo seu e-mail de compra.</p>
+                    </header>
+                    <main class="bg-white p-8 rounded-2xl shadow-lg shadow-brand-olive/20">
+                        <form id="emailStepForm" class="space-y-6">
+                            <div>
+                                <label for="initialEmail" class="block text-sm font-medium text-brand-text">Email</label>
+                                <input type="email" id="initialEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
+                            </div>
+                            <div id="emailErrorMessage" class="hidden p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
+                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary font-semibold">Continuar</button>
+                        </form>
+                    </main>
+                    <footer class="text-center mt-8 text-sm text-gray-500">
+                        <p>&copy; 2024 - Arttes da Bel</p>
+                        <p class="mt-2">
+                            <a href="#" class="hover:underline">Termos de Serviço</a> &bull; <a href="#" class="hover:underline">Política de Privacidade</a>
+                        </p>
+                    </footer>
+                </div>
+            </div>
+        </div>
+        <div id="passwordStepView" class="hidden">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="w-full max-w-md">
+                    <header class="text-center mb-8">
+                        <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
+                        <h1 class="font-display text-3xl text-brand-primary">Bem-vinda de volta!</h1>
+                        <p class="text-brand-text">Insira sua senha para continuar.</p>
                     </header>
                     <main class="bg-white p-8 rounded-2xl shadow-lg shadow-brand-olive/20">
                         <form id="loginForm" class="space-y-6">
                             <div>
                                 <label for="loginEmail" class="block text-sm font-medium text-brand-text">Email</label>
-                                <input type="email" id="loginEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
+                                <input type="email" id="loginEmail" required disabled class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed">
                             </div>
                             <div>
                                 <label for="loginPassword" class="block text-sm font-medium text-brand-text">Senha</label>
@@ -65,44 +112,45 @@
                             <div id="loginErrorMessage" class="hidden p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
                             <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary font-semibold">Entrar</button>
                         </form>
-                        <p class="text-center text-sm mt-6">
-                            Não tem uma conta? <a href="#" id="showRegisterViewLink" class="font-medium text-brand-primary hover:underline">Cadastre-se</a>
-                        </p>
+                        <div class="text-center text-sm mt-6 space-y-2">
+                            <p><a href="#" id="forgotPasswordLink" class="font-medium text-brand-primary hover:underline">Esqueci minha senha</a></p>
+                            <p><a href="#" class="auth-back-link font-medium text-gray-500 hover:underline">Voltar e usar outro e-mail</a></p>
+                        </div>
                     </main>
-                    <footer class="text-center mt-8 text-sm text-gray-500">
-                        <p>&copy; 2024 - Arttes da Bel</p>
-                    </footer>
                 </div>
             </div>
         </div>
-        <!-- Tela de Cadastro -->
-        <div id="registerView" class="hidden">
+        <div id="registerStepView" class="hidden">
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div class="w-full max-w-md">
                     <header class="text-center mb-8">
                         <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
-                        <h1 class="font-display text-3xl text-brand-primary">Crie sua Conta</h1>
-                        <p class="text-brand-text">É rápido e fácil!</p>
+                        <h1 class="font-display text-3xl text-brand-primary">Finalize seu Cadastro</h1>
+                        <p class="text-brand-text">Crie sua conta para aceder à plataforma.</p>
                     </header>
                     <main class="bg-white p-8 rounded-2xl shadow-lg shadow-brand-olive/20">
                         <form id="registerForm" class="space-y-6">
+                             <div>
+                                <label for="registerEmail" class="block text-sm font-medium text-brand-text">Email</label>
+                                <input type="email" id="registerEmail" required disabled class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed">
+                            </div>
                             <div>
-                                <label for="registerName" class="block text-sm font-medium text-brand-text">Seu Nome</label>
+                                <label for="registerName" class="block text-sm font-medium text-brand-text">Seu Nome Completo</label>
                                 <input type="text" id="registerName" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
                             </div>
                             <div>
-                                <label for="registerEmail" class="block text-sm font-medium text-brand-text">Email</label>
-                                <input type="email" id="registerEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
-                            </div>
-                            <div>
-                                <label for="registerPassword" class="block text-sm font-medium text-brand-text">Senha</label>
+                                <label for="registerPassword" class="block text-sm font-medium text-brand-text">Crie uma Senha</label>
                                 <input type="password" id="registerPassword" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
                             </div>
+                             <div>
+                                <label for="registerConfirmPassword" class="block text-sm font-medium text-brand-text">Confirme sua Senha</label>
+                                <input type="password" id="registerConfirmPassword" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
+                            </div>
                             <div id="registerErrorMessage" class="hidden p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
-                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary font-semibold">Criar Conta</button>
+                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary font-semibold">Finalizar Cadastro</button>
                         </form>
                          <p class="text-center text-sm mt-6">
-                            Já tem uma conta? <a href="#" id="showLoginViewLink" class="font-medium text-brand-primary hover:underline">Faça o login</a>
+                            <a href="#" class="auth-back-link font-medium text-gray-500 hover:underline">Voltar e usar outro e-mail</a>
                         </p>
                     </main>
                 </div>
@@ -110,13 +158,9 @@
         </div>
     </div>
 
-    <!-- Seção do Aplicativo (Layout Principal) -->
     <div id="appView" class="hidden">
         <div class="relative min-h-screen md:flex">
-            <!-- Overlay para fechar sidebar no mobile -->
             <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
-            
-            <!-- Barra Lateral Retrátil -->
             <aside id="sidebar" class="bg-brand-bg text-brand-text w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out z-30">
                 <a href="#dashboard" class="nav-link text-white text-xl flex items-center px-4">
                     <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="w-32 h-auto mx-auto">
@@ -130,8 +174,6 @@
                     <a href="#settings" class="nav-link block py-2.5 px-4 rounded transition duration-200 hover:bg-brand-primary hover:text-white">Configurações</a>
                 </nav>
             </aside>
-            
-            <!-- Conteúdo Principal -->
             <div class="flex-1 flex flex-col">
                 <header class="flex justify-between items-center p-4 bg-white shadow-md">
                     <button id="sidebar-toggle" class="text-brand-text focus:outline-none">
@@ -144,19 +186,52 @@
                         <button id="logoutButton" class="text-sm bg-brand-pink text-white font-semibold py-1 px-3 rounded-full hover:bg-brand-primary transition-colors">Sair</button>
                     </div>
                 </header>
-                
-                <div id="main-content" class="flex-1 p-4 md:p-8 overflow-y-auto">
-                    <!-- Páginas do App serão inseridas aqui -->
+                <div id="main-content" class="flex-1 p-4 md:p-8 overflow-y-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="welcomeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-lg w-full text-center shadow-xl">
+            <h2 class="font-display text-2xl text-brand-primary mb-4">Seja bem-vinda, artesã!</h2>
+            <p class="text-brand-text mb-6">Ficamos felizes em te ver por aqui! Para começar, o primeiro passo é configurar os dados base do seu ateliê na página de Configurações.</p>
+            <button id="closeWelcomeModal" class="w-full bg-brand-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-brand-text transition-colors">Ir para Configurações</button>
+        </div>
+    </div>
+
+    <div id="installModal" class="hidden fixed bottom-0 inset-x-0 pb-2 sm:pb-5 z-50">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+            <div class="p-4 rounded-lg bg-brand-primary shadow-lg sm:p-6">
+                <div class="flex items-center justify-between flex-wrap">
+                    <div class="w-0 flex-1 flex items-center">
+                        <span class="flex p-2 rounded-lg bg-brand-bg">
+                            <img class="h-6 w-6" src="/assets/logo.png" alt="Logo">
+                        </span>
+                        <p class="ml-3 font-medium text-white truncate">
+                            <span>Instale o app para uma melhor experiência!</span>
+                        </p>
+                    </div>
+                    <div class="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
+                        <button id="installButton" class="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-brand-primary bg-white hover:bg-brand-bg">
+                            Instalar
+                        </button>
+                    </div>
+                    <div class="order-2 flex-shrink-0 sm:order-3 sm:ml-2">
+                        <button id="closeInstall" type="button" class="-mr-1 flex p-2 rounded-md hover:bg-brand-primary/80 focus:outline-none focus:ring-2 focus:ring-white">
+                            <span class="sr-only">Dispensar</span>
+                            <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Templates das Páginas do App -->
     <template id="dashboard-template">
         <div id="dashboardView">
-            <h1 class="font-display text-3xl text-brand-text mb-2">Bem-vinda, Artesã!</h1>
-            <p id="welcomeMessage" class="text-lg text-gray-600 mb-8">Aqui você encontra as ferramentas para florescer seu ateliê.</p>
+            <h1 id="welcomeMessage" class="font-display text-3xl text-brand-text mb-8"></h1>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <a href="#calculator" class="nav-link bg-white p-6 rounded-2xl shadow-lg shadow-brand-olive/20 hover:shadow-xl transition-shadow">
                     <h2 class="font-display text-xl text-brand-primary">Calculadora de Preço</h2>
@@ -177,7 +252,6 @@
             </div>
         </div>
     </template>
-
     <template id="calculator-template">
         <div id="calculatorView">
             <main class="space-y-8">
@@ -286,9 +360,9 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                                 Gerar Descrição
                             </button>
-                            <div id="descriptionLoader" class="loader hidden"></div>
-                            <div id="descriptionResult" class="mt-4 p-4 bg-gray-50 rounded-md text-gray-700 whitespace-pre-wrap min-h-[100px] border">
-                                ✨ Clique em 'Gerar Descrição' e veja a mágica acontecer! Criaremos um texto de venda encantador para sua peça.
+                            <div class="relative mt-4 p-4 bg-gray-50 rounded-md text-gray-700 min-h-[150px] border flex items-center justify-center">
+                                <div id="descriptionLoader" class="loader hidden absolute"></div>
+                                <span id="descriptionText" class="text-center">✨ Clique em 'Gerar Descrição' e veja a mágica acontecer! Criaremos um texto de venda encantador para sua peça.</span>
                             </div>
                         </div>
                         <div>
@@ -297,9 +371,9 @@
                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.121-3.536a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM4.95 16.464l.707-.707a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414zm-3.536-2.121a1 1 0 010-1.414l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414 0zM10 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1z" clip-rule="evenodd" /></svg>
                                 Gerar Ideias
                             </button>
-                            <div id="suggestionsLoader" class="loader hidden"></div>
-                            <div id="suggestionsResult" class="mt-4 p-4 bg-gray-50 rounded-md text-gray-700 whitespace-pre-wrap min-h-[100px] border">
-                                💡 Sem inspiração? Clique em 'Gerar Ideias' para descobrir novas formas de divulgar e vender seu produto!
+                            <div class="relative mt-4 p-4 bg-gray-50 rounded-md text-gray-700 min-h-[150px] border flex items-center justify-center">
+                                <div id="suggestionsLoader" class="loader hidden absolute"></div>
+                                <span id="suggestionsText" class="text-center">💡 Sem inspiração? Clique em 'Gerar Ideias' para descobrir novas formas de divulgar e vender seu produto!</span>
                             </div>
                         </div>
                     </div>
@@ -307,20 +381,16 @@
             </main>
         </div>
     </template>
-    
     <template id="my-pieces-template">
         <div id="myPiecesView">
             <h1 class="font-display text-3xl text-brand-text mb-8">Minhas Peças Salvas</h1>
-            <div id="savedPiecesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Cards de peças salvas serão inseridos aqui -->
-            </div>
+            <div id="savedPiecesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
             <div id="noPiecesMessage" class="hidden text-center mt-8">
                 <p class="text-lg text-gray-600">Você ainda não salvou nenhuma peça.</p>
                 <a href="#calculator" class="nav-link mt-4 inline-block bg-brand-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-brand-text transition-colors">Calcular minha primeira peça</a>
             </div>
         </div>
     </template>
-
     <template id="settings-template">
         <div id="settingsView">
             <h1 class="font-display text-3xl text-brand-text mb-8">Configurações</h1>
@@ -339,6 +409,15 @@
                         <button id="saveProfileButton" class="bg-brand-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-brand-text transition-colors">Salvar Perfil</button>
                     </div>
                 </section>
+                
+                <section class="bg-white p-6 rounded-2xl shadow-lg shadow-brand-olive/20">
+                    <h2 class="font-display text-2xl text-brand-text mb-4">Minha Assinatura</h2>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <p class="text-sm text-brand-text">Seu acesso a esta ferramenta é válido até:</p>
+                        <p id="expirationDate" class="text-lg font-bold text-brand-primary mt-1">Carregando...</p>
+                    </div>
+                </section>
+
                 <section class="bg-white p-6 rounded-2xl shadow-lg shadow-brand-olive/20">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="font-display text-2xl text-brand-text">Dados do Ateliê</h2>
@@ -350,6 +429,7 @@
                     <div class="space-y-4">
                         <div>
                             <label for="settingsHourlyRate" class="block text-sm font-medium text-brand-text">Valor da sua Hora de Trabalho</label>
+                            <p class="text-xs text-gray-500 mt-1">Quanto você deseja receber por cada hora dedicada à produção.</p>
                             <div class="relative mt-1 input-group">
                                 <span class="input-prefix">R$</span>
                                 <input type="text" inputmode="decimal" id="settingsHourlyRate" class="settings-input numeric-input w-full p-2 border border-gray-300 rounded-md shadow-sm" placeholder="20,00">
@@ -357,6 +437,7 @@
                         </div>
                         <div>
                             <label for="settingsFixedCosts" class="block text-sm font-medium text-brand-text">Custos Fixos Mensais</label>
+                            <p class="text-xs text-gray-500 mt-1">Soma de todas as suas despesas mensais fixas (luz, internet, aluguel, etc.).</p>
                             <div class="relative mt-1 input-group">
                                  <span class="input-prefix">R$</span>
                                 <input type="text" inputmode="decimal" id="settingsFixedCosts" class="settings-input numeric-input w-full p-2 border border-gray-300 rounded-md shadow-sm" placeholder="300,00">
@@ -364,6 +445,7 @@
                         </div>
                         <div>
                             <label for="settingsHoursWorked" class="block text-sm font-medium text-brand-text">Horas Trabalhadas por Mês</label>
+                            <p class="text-xs text-gray-500 mt-1">Total de horas que você dedica ao seu ateliê por mês.</p>
                             <input type="text" inputmode="decimal" id="settingsHoursWorked" class="settings-input numeric-input w-full mt-1 p-2 border border-gray-300 rounded-md shadow-sm" placeholder="80">
                         </div>
                     </div>
@@ -372,7 +454,6 @@
             </div>
         </div>
     </template>
-    
     <template id="coming-soon-template">
         <div class="text-center">
             <h1 class="font-display text-3xl text-brand-text mb-4">Em Breve</h1>
@@ -380,19 +461,84 @@
         </div>
     </template>
 
-    <!-- Modal de Boas-vindas -->
-    <div id="welcomeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl p-8 max-w-lg w-full text-center shadow-xl">
-            <h2 class="font-display text-2xl text-brand-primary mb-4">Seja bem-vinda, artesã!</h2>
-            <p class="text-brand-text mb-6">Ficamos felizes em te ver por aqui! Para começar, o primeiro passo é configurar os dados base do seu ateliê na página de Configurações.</p>
-            <button id="closeWelcomeModal" class="w-full bg-brand-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-brand-text transition-colors">Ir para Configurações</button>
-        </div>
-    </div>
-
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, fetchSignInMethodsForEmail, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                    console.log('ServiceWorker registado com sucesso: ', registration.scope);
+                }, err => {
+                    console.log('Registo do ServiceWorker falhou: ', err);
+                });
+            });
+        }
+        
+        let deferredPrompt;
+        const installModal = document.getElementById('installModal');
+        const installButton = document.getElementById('installButton');
+        const closeInstallButton = document.getElementById('closeInstall');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const lastDismissed = localStorage.getItem('installPromptDismissed');
+            const oneWeek = 7 * 24 * 60 * 60 * 1000;
+            if (lastDismissed && (Date.now() - lastDismissed < oneWeek)) {
+                console.log('Convite de instalação já foi dispensado recentemente.');
+                return;
+            }
+            installModal.classList.remove('hidden');
+        });
+
+        installButton.addEventListener('click', async () => {
+            installModal.classList.add('hidden');
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+            }
+        });
+
+        closeInstallButton.addEventListener('click', () => {
+            installModal.classList.add('hidden');
+            localStorage.setItem('installPromptDismissed', Date.now());
+        });
+
+        function showToast(message, type = 'success') {
+            const colors = {
+                success: 'linear-gradient(to right, #00b09b, #96c93d)',
+                error: 'linear-gradient(to right, #ff5f6d, #ffc371)',
+                info: 'linear-gradient(to right, #0072ff, #00c6ff)'
+            };
+            Toastify({
+                text: message,
+                duration: 4000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                stopOnFocus: true,
+                style: {
+                    background: colors[type] || colors.info,
+                },
+            }).showToast();
+        }
+
+        function setLoading(button, isLoading, originalText) {
+            if (isLoading) {
+                button.disabled = true;
+                button.classList.add('btn-loading');
+                button.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Aguarde...`;
+            } else {
+                button.disabled = false;
+                button.classList.remove('btn-loading');
+                button.innerHTML = originalText;
+            }
+        }
 
         async function getFirebaseConfig() {
             try {
@@ -408,12 +554,18 @@
         async function main() {
             const authContainer = document.getElementById('authContainer');
             const appView = document.getElementById('appView');
-            const errorMessageDiv = document.getElementById('loginErrorMessage');
+            
+            const emailStepView = document.getElementById('emailStepView');
+            const passwordStepView = document.getElementById('passwordStepView');
+            const registerStepView = document.getElementById('registerStepView');
 
             const firebaseConfig = await getFirebaseConfig();
             if (!firebaseConfig) {
-                errorMessageDiv.textContent = 'Erro de configuração. Não foi possível carregar a página.';
-                errorMessageDiv.classList.remove('hidden');
+                document.body.classList.remove('loading');
+                authContainer.style.display = 'block';
+                const emailErrorMessage = document.getElementById('emailErrorMessage');
+                emailErrorMessage.textContent = 'Erro de configuração. Não foi possível carregar a página.';
+                emailErrorMessage.classList.remove('hidden');
                 return;
             }
 
@@ -426,12 +578,9 @@
             let piecesCollectionRef = null;
             let atelierData = {};
 
-            // ===================================================================
-            // INÍCIO DO CÓDIGO MODIFICADO PARA O LOGIN (SESSÃO)
-            // ===================================================================
             onAuthStateChanged(auth, (user) => {
+                document.body.classList.remove('loading');
                 if (user) {
-                    // Utilizador está autenticado. Agora, vamos verificar se o acesso dele ainda é válido.
                     const authorizedEmailRef = doc(db, "authorizedEmails", user.email);
                     getDoc(authorizedEmailRef).then(docSnap => {
                         if (docSnap.exists()) {
@@ -440,127 +589,164 @@
                             const now = new Date();
 
                             if (now < expirationDate) {
-                                // O acesso está válido, carrega o aplicativo normalmente
                                 currentUser = user;
                                 atelierDataRef = doc(db, "atelierData", user.uid);
                                 piecesCollectionRef = collection(db, "atelierData", currentUser.uid, "pieces");
-                                authContainer.classList.add('hidden');
-                                appView.classList.remove('hidden');
-                                loadUserDataAndNavigate();
+                                authContainer.style.display = 'none';
+                                appView.style.display = 'block';
+                                
+                                const currentHash = window.location.hash;
+                                loadUserDataAndNavigate(currentHash === '' || currentHash === '#');
                             } else {
-                                // O acesso expirou! Desconecta o utilizador e mostra uma mensagem.
-                                alert('Seu acesso expirou. Por favor, renove sua assinatura para continuar usando a ferramenta.');
-                                signOut(auth); // Desconecta o utilizador
+                                showToast('Seu acesso expirou. Por favor, renove sua assinatura.', 'error');
+                                signOut(auth);
                             }
                         } else {
-                            // Caso raro: utilizador registado mas não está na lista. Desconecta por segurança.
-                            alert('Não foi possível verificar sua autorização de acesso. Por favor, entre em contato com o suporte.');
+                            showToast('Não foi possível verificar sua autorização.', 'error');
                             signOut(auth);
                         }
                     }).catch(error => {
-                        console.error("Erro ao verificar acesso do utilizador:", error);
-                        alert('Ocorreu um erro ao verificar seu status de acesso. Tente fazer login novamente.');
+                        console.error("Erro ao verificar acesso:", error);
+                        showToast('Ocorreu um erro ao verificar seu acesso.', 'error');
                         signOut(auth);
                     });
                 } else {
-                    // Utilizador não está autenticado, mostra a tela de login
-                    currentUser = null;
-                    authContainer.classList.remove('hidden');
-                    appView.classList.add('hidden');
+                    authContainer.style.display = 'block';
+                    appView.style.display = 'none';
                 }
             });
-            // ===================================================================
-            // FIM DO CÓDIGO MODIFICADO
-            // ===================================================================
 
-            const loginView = document.getElementById('loginView');
-            const registerView = document.getElementById('registerView');
-            document.getElementById('showRegisterViewLink').addEventListener('click', (e) => {
-                e.preventDefault();
-                loginView.classList.add('hidden');
-                registerView.classList.remove('hidden');
-            });
+            const emailStepForm = document.getElementById('emailStepForm');
+            const emailButton = emailStepForm.querySelector('button[type="submit"]');
+            const originalEmailButtonText = emailButton.innerHTML;
+            const emailErrorMessage = document.getElementById('emailErrorMessage');
 
-            document.getElementById('showLoginViewLink').addEventListener('click', (e) => {
+            emailStepForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                registerView.classList.add('hidden');
-                loginView.classList.remove('hidden');
+                setLoading(emailButton, true, originalEmailButtonText);
+                emailErrorMessage.classList.add('hidden');
+
+                const email = document.getElementById('initialEmail').value;
+                const authorizedEmailRef = doc(db, "authorizedEmails", email);
+
+                try {
+                    const docSnap = await getDoc(authorizedEmailRef);
+
+                    if (docSnap.exists()) {
+                        const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+                        
+                        if (signInMethods.length > 0) {
+                            document.getElementById('loginEmail').value = email;
+                            emailStepView.classList.add('hidden');
+                            passwordStepView.classList.remove('hidden');
+                        } else {
+                            document.getElementById('registerEmail').value = email;
+                            emailStepView.classList.add('hidden');
+                            registerStepView.classList.remove('hidden');
+                        }
+                    } else {
+                        emailErrorMessage.textContent = 'E-mail não encontrado. Verifique se digitou o mesmo e-mail da compra.';
+                        emailErrorMessage.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error("Erro ao verificar e-mail:", error);
+                    emailErrorMessage.textContent = 'Ocorreu um erro. Tente novamente.';
+                    emailErrorMessage.classList.remove('hidden');
+                } finally {
+                    setLoading(emailButton, false, originalEmailButtonText);
+                }
             });
             
-            document.getElementById('loginForm').addEventListener('submit', (e) => {
+            document.querySelectorAll('.auth-back-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    passwordStepView.classList.add('hidden');
+                    registerStepView.classList.add('hidden');
+                    emailStepView.classList.remove('hidden');
+                });
+            });
+
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = loginForm.querySelector('button[type="submit"]');
+            const originalLoginButtonText = loginButton.innerHTML;
+            loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+                setLoading(loginButton, true, originalLoginButtonText);
                 const email = document.getElementById('loginEmail').value;
                 const password = document.getElementById('loginPassword').value;
+                const loginErrorMessage = document.getElementById('loginErrorMessage');
+                
                 signInWithEmailAndPassword(auth, email, password)
                     .catch((error) => {
-                        document.getElementById('loginErrorMessage').textContent = 'Email ou senha inválidos.';
-                        document.getElementById('loginErrorMessage').classList.remove('hidden');
+                        loginErrorMessage.textContent = 'Senha inválida. Tente novamente.';
+                        loginErrorMessage.classList.remove('hidden');
+                    })
+                    .finally(() => {
+                        setLoading(loginButton, false, originalLoginButtonText);
                     });
             });
 
-            // ===================================================================
-            // INÍCIO DO CÓDIGO MODIFICADO PARA O CADASTRO
-            // ===================================================================
-            document.getElementById('registerForm').addEventListener('submit', (e) => {
+            const registerForm = document.getElementById('registerForm');
+            const registerButton = registerForm.querySelector('button[type="submit"]');
+            const originalRegisterButtonText = registerButton.innerHTML;
+            registerForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+                setLoading(registerButton, true, originalRegisterButtonText);
                 const name = document.getElementById('registerName').value;
                 const email = document.getElementById('registerEmail').value;
                 const password = document.getElementById('registerPassword').value;
-                const registerErrorDiv = document.getElementById('registerErrorMessage');
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                const registerErrorMessage = document.getElementById('registerErrorMessage');
 
-                if (!name || password.length < 6) {
-                    registerErrorDiv.textContent = !name ? 'Por favor, insira seu nome.' : 'A senha deve ter pelo menos 6 caracteres.';
-                    registerErrorDiv.classList.remove('hidden');
+                if (password !== confirmPassword) {
+                    registerErrorMessage.textContent = 'As senhas não coincidem.';
+                    registerErrorMessage.classList.remove('hidden');
+                    setLoading(registerButton, false, originalRegisterButtonText);
                     return;
                 }
 
-                const authorizedEmailRef = doc(db, "authorizedEmails", email);
-                getDoc(authorizedEmailRef).then((docSnap) => {
-                    if (docSnap.exists()) {
-                        const userData = docSnap.data();
-                        // Converte o Timestamp do Firestore para um objeto Date do JavaScript
-                        const expirationDate = userData.expirationDate.toDate(); 
-                        const now = new Date();
-
-                        // Verifica se a data atual é anterior à data de expiração
-                        if (now < expirationDate) {
-                            // O acesso é válido, pode criar a conta
-                            createUserWithEmailAndPassword(auth, email, password)
-                                .then(async (userCredential) => {
-                                    await updateProfile(userCredential.user, { displayName: name });
-                                    await setDoc(doc(db, "atelierData", userCredential.user.uid), { name: name, hasLoggedInBefore: false }, { merge: true });
-                                    alert("Cadastro realizado com sucesso!");
-                                    registerErrorDiv.classList.add('hidden');
-                                })
-                                .catch((error) => {
-                                    registerErrorDiv.textContent = error.code === 'auth/email-already-in-use' ? "Este email já está cadastrado. Tente fazer o login." : "Ocorreu um erro ao criar a sua conta.";
-                                    registerErrorDiv.classList.remove('hidden');
-                                });
-                        } else {
-                            // O acesso expirou
-                            registerErrorDiv.textContent = 'O seu acesso a esta ferramenta expirou. Por favor, renove a sua assinatura para se cadastrar.';
-                            registerErrorDiv.classList.remove('hidden');
-                        }
-                    } else {
-                        // O e-mail não foi encontrado na lista de autorizados
-                        registerErrorDiv.textContent = 'E-mail não autorizado. Por favor, utilize o mesmo e-mail que usou na sua compra na Hotmart.';
-                        registerErrorDiv.classList.remove('hidden');
-                    }
-                }).catch((error) => {
-                    console.error("Erro ao verificar autorização: ", error);
-                    registerErrorDiv.textContent = 'Ocorreu um erro ao verificar a permissão do seu e-mail. Tente novamente mais tarde.';
-                    registerErrorDiv.classList.remove('hidden');
-                });
+                createUserWithEmailAndPassword(auth, email, password)
+                    .then(async (userCredential) => {
+                        await updateProfile(userCredential.user, { displayName: name });
+                        await setDoc(doc(db, "atelierData", userCredential.user.uid), { name: name, hasLoggedInBefore: false }, { merge: true });
+                        registerErrorMessage.classList.add('hidden');
+                    })
+                    .catch((error) => {
+                        registerErrorMessage.textContent = "Ocorreu um erro ao criar a sua conta.";
+                        registerErrorMessage.classList.remove('hidden');
+                    })
+                    .finally(() => {
+                        setLoading(registerButton, false, originalRegisterButtonText);
+                    });
             });
-            // ===================================================================
-            // FIM DO CÓDIGO MODIFICADO
-            // ===================================================================
+
+            document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                if (!email) {
+                    showToast('O campo de e-mail está vazio.', 'error');
+                    return;
+                }
+                sendPasswordResetEmail(auth, email)
+                    .then(() => {
+                        showToast('E-mail de recuperação de senha enviado! Verifique sua caixa de entrada.', 'success');
+                    })
+                    .catch((error) => {
+                        console.error("Erro ao enviar e-mail de recuperação:", error);
+                        showToast('Não foi possível enviar o e-mail de recuperação. Tente novamente.', 'error');
+                    });
+            });
             
             document.getElementById('logoutButton').addEventListener('click', () => {
-                signOut(auth).catch((error) => console.error("Erro ao sair:", error));
+                signOut(auth).then(() => {
+                    window.location.hash = '';
+                    emailStepView.classList.remove('hidden');
+                    passwordStepView.classList.add('hidden');
+                    registerStepView.classList.add('hidden');
+                }).catch((error) => console.error("Erro ao sair:", error));
             });
             
-            async function loadUserDataAndNavigate() {
+            async function loadUserDataAndNavigate(isFirstLoad = false) {
                 if (!atelierDataRef) return;
                 try {
                     const docSnap = await getDoc(atelierDataRef);
@@ -572,7 +758,8 @@
                     } else {
                         document.getElementById('welcomeModal').classList.remove('hidden');
                     }
-                    navigate(window.location.hash || '#dashboard');
+                    const hash = isFirstLoad ? '#dashboard' : (window.location.hash || '#dashboard');
+                    navigate(hash);
                 } catch (error) {
                     console.error("Erro ao carregar dados do usuário:", error);
                 }
@@ -580,8 +767,9 @@
 
             document.getElementById('closeWelcomeModal').addEventListener('click', () => {
                 document.getElementById('welcomeModal').classList.add('hidden');
-                atelierData.hasLoggedInBefore = true;
-                setDoc(atelierDataRef, { hasLoggedInBefore: true }, { merge: true });
+                if (atelierDataRef) {
+                    setDoc(atelierDataRef, { hasLoggedInBefore: true }, { merge: true });
+                }
                 navigate('#settings');
             });
 
@@ -610,7 +798,7 @@
 
                 const addMaterialRow = (name = '', price = '', quantity = '') => {
                     const div = document.createElement('div');
-                    div.classList.add('relative', 'p-4', 'border', 'rounded-lg', 'space-y-2', 'pt-8', 'material-row');
+                    div.classList.add('relative', 'p-4', 'border', 'rounded-lg', 'space-y-2', 'pt-6', 'material-row');
                     div.innerHTML = `
                         <button class="remove-btn absolute top-2 right-2 text-red-400 hover:text-red-600 font-bold text-2xl">&times;</button>
                         <div class="w-full"> <label class="text-sm font-medium text-brand-text">Nome do Material</label> <p class="text-xs text-gray-500 mt-1">Ex: Tecido Tricoline, Linha, Zíper.</p> <input type="text" value="${name}" class="material-name piece-input w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
@@ -624,7 +812,7 @@
 
                 const addTaskRow = (name = '', time = '') => {
                     const div = document.createElement('div');
-                    div.classList.add('relative', 'p-4', 'border', 'rounded-lg', 'space-y-2', 'pt-8', 'task-row');
+                    div.classList.add('relative', 'p-4', 'border', 'rounded-lg', 'space-y-2', 'pt-6', 'task-row');
                     div.innerHTML = `
                         <button class="remove-btn absolute top-2 right-2 text-red-400 hover:text-red-600 font-bold text-2xl">&times;</button>
                         <div class="w-full"> <label class="text-sm font-medium text-brand-text">Nome da Tarefa</label> <p class="text-xs text-gray-500 mt-1">Ex: Cortar, Costurar, Acabamento.</p> <input type="text" value="${name}" class="task-name piece-input w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
@@ -705,11 +893,14 @@
                     const pieceName = calculatorNode.querySelector('#pieceName').value || "uma peça de artesanato";
                     const materials = Array.from(calculatorNode.querySelectorAll('.material-name')).map(input => input.value).filter(Boolean);
                     const finalPrice = calculatorNode.querySelector('#finalPrice').textContent;
-                    if (materials.length === 0) { calculatorNode.querySelector('#descriptionResult').textContent = "Adicione pelo menos um material."; return; }
+                    if (materials.length === 0) { showToast("Adicione pelo menos um material.", 'error'); return; }
                     const dataPayload = { type: 'description', pieceName, materials, finalPrice };
                     calculatorNode.querySelector('#descriptionLoader').classList.remove('hidden');
-                    calculatorNode.querySelector('#descriptionResult').textContent = '';
-                    calculatorNode.querySelector('#descriptionResult').textContent = await callAIAssistant(dataPayload);
+                    calculatorNode.querySelector('#descriptionText').classList.add('hidden');
+                    const resultText = await callAIAssistant(dataPayload);
+                    calculatorNode.querySelector('#descriptionText').textContent = resultText;
+                    calculatorNode.querySelector('#descriptionText').classList.remove('text-center', 'hidden');
+                    calculatorNode.querySelector('#descriptionText').classList.add('text-left', 'whitespace-pre-wrap');
                     calculatorNode.querySelector('#descriptionLoader').classList.add('hidden');
                 });
 
@@ -718,11 +909,14 @@
                     const materials = Array.from(calculatorNode.querySelectorAll('.material-name')).map(input => input.value).filter(Boolean);
                     const totalTime = calculatorNode.querySelector('#totalTime').textContent;
                     const finalPrice = calculatorNode.querySelector('#finalPrice').textContent;
-                    if (materials.length === 0) { calculatorNode.querySelector('#suggestionsResult').textContent = "Adicione os detalhes da peça."; return; }
+                    if (materials.length === 0) { showToast("Adicione os detalhes da peça.", 'error'); return; }
                     const dataPayload = { type: 'suggestions', pieceName, materials, totalTime, finalPrice };
                     calculatorNode.querySelector('#suggestionsLoader').classList.remove('hidden');
-                    calculatorNode.querySelector('#suggestionsResult').textContent = '';
-                    calculatorNode.querySelector('#suggestionsResult').textContent = await callAIAssistant(dataPayload);
+                    calculatorNode.querySelector('#suggestionsText').classList.add('hidden');
+                    const resultText = await callAIAssistant(dataPayload);
+                    calculatorNode.querySelector('#suggestionsText').textContent = resultText;
+                    calculatorNode.querySelector('#suggestionsText').classList.remove('text-center', 'hidden');
+                    calculatorNode.querySelector('#suggestionsText').classList.add('text-left', 'whitespace-pre-wrap');
                     calculatorNode.querySelector('#suggestionsLoader').classList.add('hidden');
                 });
                 
@@ -782,12 +976,15 @@
                     }
                 });
                 
-                calculatorNode.querySelector('#savePieceButton').addEventListener('click', async () => {
+                const savePieceButton = calculatorNode.querySelector('#savePieceButton');
+                const originalSavePieceText = savePieceButton.innerHTML;
+                savePieceButton.addEventListener('click', async () => {
                     const pieceName = calculatorNode.querySelector('#pieceName').value;
                     if (!pieceName) {
-                        alert('Por favor, dê um nome à sua peça antes de salvar.');
+                        showToast('Por favor, dê um nome à sua peça antes de salvar.', 'error');
                         return;
                     }
+                    setLoading(savePieceButton, true, originalSavePieceText);
                     savePieceToLocalStorage();
                     const pieceData = JSON.parse(localStorage.getItem('unsavedPiece'));
                     
@@ -796,10 +993,12 @@
                     
                     try {
                         await addDoc(piecesCollectionRef, pieceData);
-                        alert(`Peça "${pieceName}" salva com sucesso!`);
+                        showToast(`Peça "${pieceName}" salva com sucesso!`, 'success');
                     } catch (error) {
                         console.error("Erro ao salvar peça:", error);
-                        alert("Ocorreu um erro ao salvar sua peça.");
+                        showToast("Ocorreu um erro ao salvar sua peça.", 'error');
+                    } finally {
+                        setLoading(savePieceButton, false, originalSavePieceText);
                     }
                 });
                 
@@ -823,10 +1022,10 @@
             };
 
             async function navigate(hash) {
-                const targetView = hash.substring(1);
+                const targetView = hash.substring(1) || 'dashboard';
                 
                 document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.toggle('bg-brand-primary/20', link.hash === hash);
+                    link.classList.toggle('bg-brand-primary/20', link.hash === hash || (hash === '' && link.hash === '#dashboard'));
                 });
 
                 const template = templates[targetView];
@@ -873,42 +1072,59 @@
                             if (!pieceId) return;
                             if (e.target.classList.contains('delete-piece-btn')) {
                                 if (confirm('Tem certeza que deseja excluir esta peça?')) {
-                                    await deleteDoc(doc(db, "atelierData", currentUser.uid, "pieces", pieceId));
-                                    loadAndRenderSavedPieces();
+                                    try {
+                                        await deleteDoc(doc(db, "atelierData", currentUser.uid, "pieces", pieceId));
+                                        showToast('Peça excluída com sucesso.', 'success');
+                                        loadAndRenderSavedPieces();
+                                    } catch (error) {
+                                        showToast('Erro ao excluir a peça.', 'error');
+                                    }
                                 }
                             } else if (e.target.classList.contains('load-piece-btn')) {
                                 const pieceDoc = await getDoc(doc(db, "atelierData", currentUser.uid, "pieces", pieceId));
                                 if (pieceDoc.exists()) {
                                     localStorage.setItem('loadPieceData', JSON.stringify(pieceDoc.data()));
-                                    navigate('#calculator');
+                                    window.location.hash = '#calculator';
                                 }
                             }
                         });
                         loadAndRenderSavedPieces();
                     } else if (targetView === 'settings') {
-                        const settingsStatus = document.getElementById('settingsStatus');
                         document.getElementById('profileName').value = currentUser.displayName || atelierData.name || '';
                         document.getElementById('profileEmail').value = currentUser.email || '';
                         document.getElementById('settingsHourlyRate').value = atelierData.hourlyRate || '';
                         document.getElementById('settingsFixedCosts').value = atelierData.fixedCosts || '';
                         document.getElementById('settingsHoursWorked').value = atelierData.hoursWorked || '';
                         
+                        const expirationDateEl = document.getElementById('expirationDate');
+                        const authorizedEmailRef = doc(db, "authorizedEmails", currentUser.email);
+                        getDoc(authorizedEmailRef).then(docSnap => {
+                            if (docSnap.exists()) {
+                                const expirationDate = docSnap.data().expirationDate.toDate();
+                                const formattedDate = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' }).format(expirationDate);
+                                expirationDateEl.textContent = formattedDate;
+                            } else {
+                                expirationDateEl.textContent = "Não foi possível encontrar.";
+                            }
+                        });
+
                         document.getElementById('saveProfileButton').addEventListener('click', async () => {
                             const newName = document.getElementById('profileName').value;
-                            if (!newName) { alert('O nome não pode ficar em branco.'); return; }
+                            if (!newName) { showToast('O nome não pode ficar em branco.', 'error'); return; }
                             await updateProfile(currentUser, { displayName: newName });
                             await setDoc(atelierDataRef, { name: newName }, { merge: true });
                             atelierData.name = newName;
-                            alert('Perfil atualizado!');
+                            showToast('Perfil atualizado!', 'success');
                         });
 
                         document.getElementById('saveAtelierButton').addEventListener('click', () => {
-                            atelierData.hourlyRate = document.getElementById('settingsHourlyRate').value;
+                           atelierData.hourlyRate = document.getElementById('settingsHourlyRate').value;
                             atelierData.fixedCosts = document.getElementById('settingsFixedCosts').value;
                             atelierData.hoursWorked = document.getElementById('settingsHoursWorked').value;
                             setDoc(atelierDataRef, { ...atelierData }, { merge: true })
                                 .then(() => {
-                                    settingsStatus.querySelector('span').textContent = 'Salvo na nuvem!';
+                                    const settingsStatus = document.getElementById('settingsStatus');
+                                    settingsStatus.querySelector('span').textContent = 'Salvo!';
                                     settingsStatus.classList.remove('text-yellow-600');
                                     settingsStatus.classList.add('text-brand-olive');
                                     settingsStatus.style.opacity = '1';
@@ -923,18 +1139,25 @@
                 }
             }
             
-            appView.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            
+            window.addEventListener('hashchange', () => navigate(window.location.hash));
+            document.body.addEventListener('click', (e) => {
                 if (e.target.matches('.nav-link, .nav-link *')) {
                     const link = e.target.closest('.nav-link');
                     if(link.classList.contains('cursor-not-allowed')) return;
                     e.preventDefault();
-                    navigate(link.hash);
+                    window.location.hash = link.hash;
+
+                    if (!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
+                        sidebar.classList.add('-translate-x-full');
+                        sidebarOverlay.classList.add('hidden');
+                    }
                 }
             });
             
-            const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
-            const sidebarOverlay = document.getElementById('sidebar-overlay');
             sidebarToggle.addEventListener('click', () => {
                 sidebar.classList.toggle('-translate-x-full');
                 sidebarOverlay.classList.toggle('hidden');
