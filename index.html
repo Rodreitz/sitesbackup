@@ -36,8 +36,7 @@
     </script>
     <style>
         body.loading #authContainer,
-        body.loading #appView,
-        body.loading #legalContainer {
+        body.loading #appView {
             display: none;
         }
         body:not(.loading) #loadingIndicator {
@@ -56,27 +55,6 @@
             cursor: not-allowed;
             opacity: 0.7;
         }
-        .legal-content h2 {
-            font-family: 'Montserrat', serif;
-            font-size: 1.5rem;
-            color: #786D4E;
-            margin-bottom: 1rem;
-        }
-        .legal-content h3 {
-            font-family: 'Montserrat', serif;
-            font-size: 1.25rem;
-            color: #786D4E;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .legal-content p, .legal-content li {
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-        .legal-content ul {
-            list-style-type: disc;
-            padding-left: 1.5rem;
-        }
     </style>
 </head>
 <body class="bg-brand-bg/50 text-brand-text loading">
@@ -85,49 +63,20 @@
         <div class="loader"></div>
     </div>
 
-    <div id="authContainer">
-        <div id="emailStepView">
+    <div id="authContainer" class="hidden">
+        <div id="loginView">
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div class="w-full max-w-md">
                     <header class="text-center mb-8">
                         <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
-                        <h1 class="font-display text-3xl text-brand-primary">Acesse sua Conta</h1>
-                        <p class="text-brand-text">Comece inserindo seu e-mail de compra.</p>
-                    </header>
-                    <main class="bg-white p-8 rounded-2xl shadow-lg shadow-brand-olive/20">
-                        <form id="emailStepForm" class="space-y-6">
-                            <div>
-                                <label for="initialEmail" class="block text-sm font-medium text-brand-text">Email</label>
-                                <input type="email" id="initialEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
-                            </div>
-                            <div id="emailErrorMessage" class="hidden p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
-                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary font-semibold">Continuar</button>
-                        </form>
-                    </main>
-                    <footer class="text-center mt-8 text-sm text-gray-500">
-                        <p>&copy; 2024 - Arttes da Bel</p>
-                        <p class="mt-2 space-x-2">
-                            <a href="#terms" class="nav-link-legal hover:underline">Termos de Serviço</a> &bull; 
-                            <a href="#privacy" class="nav-link-legal hover:underline">Política de Privacidade</a> &bull;
-                            <a href="#support" class="nav-link-legal hover:underline">Suporte</a>
-                        </p>
-                    </footer>
-                </div>
-            </div>
-        </div>
-        <div id="passwordStepView" class="hidden">
-            <div class="flex items-center justify-center min-h-screen p-4">
-                <div class="w-full max-w-md">
-                    <header class="text-center mb-8">
-                        <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
-                        <h1 class="font-display text-3xl text-brand-primary">Bem-vinda de volta!</h1>
-                        <p class="text-brand-text">Insira sua senha para continuar.</p>
+                        <h1 class="font-display text-3xl text-brand-primary">Área Exclusiva</h1>
+                        <p class="text-brand-text">Acesse a calculadora e outras ferramentas.</p>
                     </header>
                     <main class="bg-white p-8 rounded-2xl shadow-lg shadow-brand-olive/20">
                         <form id="loginForm" class="space-y-6">
                             <div>
                                 <label for="loginEmail" class="block text-sm font-medium text-brand-text">Email</label>
-                                <input type="email" id="loginEmail" required disabled class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed">
+                                <input type="email" id="loginEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
                             </div>
                             <div>
                                 <label for="loginPassword" class="block text-sm font-medium text-brand-text">Senha</label>
@@ -136,51 +85,51 @@
                             <div id="loginErrorMessage" class="hidden p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
                             <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary font-semibold">Entrar</button>
                         </form>
-                        <div class="text-center text-sm mt-6 space-y-2">
-                            <p><a href="#" id="forgotPasswordLink" class="font-medium text-brand-primary hover:underline">Esqueci minha senha</a></p>
-                            <p><a href="#" class="auth-back-link font-medium text-gray-500 hover:underline">Voltar e usar outro e-mail</a></p>
-                        </div>
+                        <p class="text-center text-sm mt-6">
+                            Não tem uma conta? <a href="#" id="showRegisterViewLink" class="font-medium text-brand-primary hover:underline">Cadastre-se</a>
+                        </p>
                     </main>
+                    <footer class="text-center mt-8 text-sm text-gray-500">
+                        <p>&copy; 2024 - Arttes da Bel</p>
+                        <p class="mt-2">
+                            <a href="#" class="hover:underline">Termos de Serviço</a> &bull; <a href="#" class="hover:underline">Política de Privacidade</a>
+                        </p>
+                    </footer>
                 </div>
             </div>
         </div>
-        <div id="registerStepView" class="hidden">
+        <div id="registerView" class="hidden">
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div class="w-full max-w-md">
                     <header class="text-center mb-8">
                         <img src="/assets/logo.png" alt="Logo Arttes da Bel" class="mx-auto w-48 h-auto mb-4">
-                        <h1 class="font-display text-3xl text-brand-primary">Finalize seu Cadastro</h1>
-                        <p class="text-brand-text">Crie sua conta para aceder à plataforma.</p>
+                        <h1 class="font-display text-3xl text-brand-primary">Crie sua Conta</h1>
+                        <p class="text-brand-text">É rápido e fácil!</p>
                     </header>
                     <main class="bg-white p-8 rounded-2xl shadow-lg shadow-brand-olive/20">
                         <form id="registerForm" class="space-y-6">
-                             <div>
-                                <label for="registerEmail" class="block text-sm font-medium text-brand-text">Email</label>
-                                <input type="email" id="registerEmail" required disabled class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed">
-                            </div>
                             <div>
-                                <label for="registerName" class="block text-sm font-medium text-brand-text">Seu Nome Completo</label>
+                                <label for="registerName" class="block text-sm font-medium text-brand-text">Seu Nome</label>
                                 <input type="text" id="registerName" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
                             </div>
                             <div>
-                                <label for="registerPassword" class="block text-sm font-medium text-brand-text">Crie uma Senha</label>
+                                <label for="registerEmail" class="block text-sm font-medium text-brand-text">Email</label>
+                                <input type="email" id="registerEmail" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
+                            </div>
+                            <div>
+                                <label for="registerPassword" class="block text-sm font-medium text-brand-text">Senha</label>
                                 <input type="password" id="registerPassword" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
                             </div>
-                             <div>
-                                <label for="registerConfirmPassword" class="block text-sm font-medium text-brand-text">Confirme sua Senha</label>
-                                <input type="password" id="registerConfirmPassword" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-brand-primary focus:border-brand-primary">
-                            </div>
                             <div id="registerErrorMessage" class="hidden p-3 bg-red-100 text-red-700 rounded-md text-sm"></div>
-                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary font-semibold">Finalizar Cadastro</button>
+                            <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-brand-primary hover:bg-brand-text focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary font-semibold">Criar Conta</button>
                         </form>
                          <p class="text-center text-sm mt-6">
-                            <a href="#" class="auth-back-link font-medium text-gray-500 hover:underline">Voltar e usar outro e-mail</a>
+                            Já tem uma conta? <a href="#" id="showLoginViewLink" class="font-medium text-brand-primary hover:underline">Faça o login</a>
                         </p>
                     </main>
                 </div>
             </div>
         </div>
-        <div id="legalContainer" class="hidden"></div>
     </div>
 
     <div id="appView" class="hidden">
@@ -489,7 +438,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, fetchSignInMethodsForEmail, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         if ('serviceWorker' in navigator) {
@@ -579,18 +528,14 @@
         async function main() {
             const authContainer = document.getElementById('authContainer');
             const appView = document.getElementById('appView');
-            
-            const emailStepView = document.getElementById('emailStepView');
-            const passwordStepView = document.getElementById('passwordStepView');
-            const registerStepView = document.getElementById('registerStepView');
+            const errorMessageDiv = document.getElementById('loginErrorMessage');
 
             const firebaseConfig = await getFirebaseConfig();
             if (!firebaseConfig) {
                 document.body.classList.remove('loading');
                 authContainer.style.display = 'block';
-                const emailErrorMessage = document.getElementById('emailErrorMessage');
-                emailErrorMessage.textContent = 'Erro de configuração. Não foi possível carregar a página.';
-                emailErrorMessage.classList.remove('hidden');
+                errorMessageDiv.textContent = 'Erro de configuração. Não foi possível carregar a página.';
+                errorMessageDiv.classList.remove('hidden');
                 return;
             }
 
@@ -605,6 +550,7 @@
 
             onAuthStateChanged(auth, (user) => {
                 document.body.classList.remove('loading');
+
                 if (user) {
                     const authorizedEmailRef = doc(db, "authorizedEmails", user.email);
                     getDoc(authorizedEmailRef).then(docSnap => {
@@ -641,70 +587,33 @@
                 }
             });
 
-            const emailStepForm = document.getElementById('emailStepForm');
-            const emailButton = emailStepForm.querySelector('button[type="submit"]');
-            const originalEmailButtonText = emailButton.innerHTML;
-            const emailErrorMessage = document.getElementById('emailErrorMessage');
-
-            emailStepForm.addEventListener('submit', async (e) => {
+            const loginView = document.getElementById('loginView');
+            const registerView = document.getElementById('registerView');
+            document.getElementById('showRegisterViewLink').addEventListener('click', (e) => {
                 e.preventDefault();
-                setLoading(emailButton, true, originalEmailButtonText);
-                emailErrorMessage.classList.add('hidden');
-
-                const email = document.getElementById('initialEmail').value;
-                const authorizedEmailRef = doc(db, "authorizedEmails", email);
-
-                try {
-                    const docSnap = await getDoc(authorizedEmailRef);
-
-                    if (docSnap.exists()) {
-                        const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-                        
-                        if (signInMethods.length > 0) {
-                            document.getElementById('loginEmail').value = email;
-                            emailStepView.classList.add('hidden');
-                            passwordStepView.classList.remove('hidden');
-                        } else {
-                            document.getElementById('registerEmail').value = email;
-                            emailStepView.classList.add('hidden');
-                            registerStepView.classList.remove('hidden');
-                        }
-                    } else {
-                        emailErrorMessage.textContent = 'E-mail não encontrado. Verifique se digitou o mesmo e-mail da compra.';
-                        emailErrorMessage.classList.remove('hidden');
-                    }
-                } catch (error) {
-                    console.error("Erro ao verificar e-mail:", error);
-                    emailErrorMessage.textContent = 'Ocorreu um erro. Tente novamente.';
-                    emailErrorMessage.classList.remove('hidden');
-                } finally {
-                    setLoading(emailButton, false, originalEmailButtonText);
-                }
+                loginView.classList.add('hidden');
+                registerView.classList.remove('hidden');
             });
-            
-            document.querySelectorAll('.auth-back-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    passwordStepView.classList.add('hidden');
-                    registerStepView.classList.add('hidden');
-                    emailStepView.classList.remove('hidden');
-                });
+
+            document.getElementById('showLoginViewLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                registerView.classList.add('hidden');
+                loginView.classList.remove('hidden');
             });
 
             const loginForm = document.getElementById('loginForm');
             const loginButton = loginForm.querySelector('button[type="submit"]');
             const originalLoginButtonText = loginButton.innerHTML;
+            
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 setLoading(loginButton, true, originalLoginButtonText);
                 const email = document.getElementById('loginEmail').value;
                 const password = document.getElementById('loginPassword').value;
-                const loginErrorMessage = document.getElementById('loginErrorMessage');
-                
                 signInWithEmailAndPassword(auth, email, password)
                     .catch((error) => {
-                        loginErrorMessage.textContent = 'Senha inválida. Tente novamente.';
-                        loginErrorMessage.classList.remove('hidden');
+                        document.getElementById('loginErrorMessage').textContent = 'Email ou senha inválidos.';
+                        document.getElementById('loginErrorMessage').classList.remove('hidden');
                     })
                     .finally(() => {
                         setLoading(loginButton, false, originalLoginButtonText);
@@ -714,60 +623,66 @@
             const registerForm = document.getElementById('registerForm');
             const registerButton = registerForm.querySelector('button[type="submit"]');
             const originalRegisterButtonText = registerButton.innerHTML;
+            
             registerForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 setLoading(registerButton, true, originalRegisterButtonText);
                 const name = document.getElementById('registerName').value;
                 const email = document.getElementById('registerEmail').value;
                 const password = document.getElementById('registerPassword').value;
-                const confirmPassword = document.getElementById('registerConfirmPassword').value;
-                const registerErrorMessage = document.getElementById('registerErrorMessage');
+                const registerErrorDiv = document.getElementById('registerErrorMessage');
 
-                if (password !== confirmPassword) {
-                    registerErrorMessage.textContent = 'As senhas não coincidem.';
-                    registerErrorMessage.classList.remove('hidden');
+                if (!name || password.length < 6) {
+                    registerErrorDiv.textContent = !name ? 'Por favor, insira seu nome.' : 'A senha deve ter pelo menos 6 caracteres.';
+                    registerErrorDiv.classList.remove('hidden');
                     setLoading(registerButton, false, originalRegisterButtonText);
                     return;
                 }
 
-                createUserWithEmailAndPassword(auth, email, password)
-                    .then(async (userCredential) => {
-                        await updateProfile(userCredential.user, { displayName: name });
-                        await setDoc(doc(db, "atelierData", userCredential.user.uid), { name: name, hasLoggedInBefore: false }, { merge: true });
-                        registerErrorMessage.classList.add('hidden');
-                    })
-                    .catch((error) => {
-                        registerErrorMessage.textContent = "Ocorreu um erro ao criar a sua conta.";
-                        registerErrorMessage.classList.remove('hidden');
-                    })
-                    .finally(() => {
-                        setLoading(registerButton, false, originalRegisterButtonText);
-                    });
-            });
+                const authorizedEmailRef = doc(db, "authorizedEmails", email);
+                getDoc(authorizedEmailRef).then((docSnap) => {
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        const expirationDate = userData.expirationDate.toDate(); 
+                        const now = new Date();
 
-            document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('loginEmail').value;
-                if (!email) {
-                    showToast('O campo de e-mail está vazio.', 'error');
-                    return;
-                }
-                sendPasswordResetEmail(auth, email)
-                    .then(() => {
-                        showToast('E-mail de recuperação de senha enviado! Verifique sua caixa de entrada.', 'success');
-                    })
-                    .catch((error) => {
-                        console.error("Erro ao enviar e-mail de recuperação:", error);
-                        showToast('Não foi possível enviar o e-mail de recuperação. Tente novamente.', 'error');
-                    });
+                        if (now < expirationDate) {
+                            createUserWithEmailAndPassword(auth, email, password)
+                                .then(async (userCredential) => {
+                                    await updateProfile(userCredential.user, { displayName: name });
+                                    await setDoc(doc(db, "atelierData", userCredential.user.uid), { name: name, hasLoggedInBefore: false }, { merge: true });
+                                    registerErrorDiv.classList.add('hidden');
+                                })
+                                .catch((error) => {
+                                    registerErrorDiv.textContent = error.code === 'auth/email-already-in-use' ? "Este email já está cadastrado. Tente fazer o login." : "Ocorreu um erro ao criar a sua conta.";
+                                    registerErrorDiv.classList.remove('hidden');
+                                })
+                                .finally(() => {
+                                    setLoading(registerButton, false, originalRegisterButtonText);
+                                });
+                        } else {
+                            registerErrorDiv.textContent = 'O seu acesso a esta ferramenta expirou. Por favor, renove a sua assinatura para se cadastrar.';
+                            registerErrorDiv.classList.remove('hidden');
+                            setLoading(registerButton, false, originalRegisterButtonText);
+                        }
+                    } else {
+                        registerErrorDiv.textContent = 'E-mail não autorizado. Por favor, utilize o mesmo e-mail que usou na sua compra na Hotmart.';
+                        registerErrorDiv.classList.remove('hidden');
+                        setLoading(registerButton, false, originalRegisterButtonText);
+                    }
+                }).catch((error) => {
+                    console.error("Erro ao verificar autorização: ", error);
+                    registerErrorDiv.textContent = 'Ocorreu um erro ao verificar a permissão do seu e-mail. Tente novamente mais tarde.';
+                    registerErrorDiv.classList.remove('hidden');
+                    setLoading(registerButton, false, originalRegisterButtonText);
+                });
             });
             
             document.getElementById('logoutButton').addEventListener('click', () => {
                 signOut(auth).then(() => {
                     window.location.hash = '';
-                    emailStepView.classList.remove('hidden');
-                    passwordStepView.classList.add('hidden');
-                    registerStepView.classList.add('hidden');
+                    document.getElementById('loginView').classList.remove('hidden');
+                    document.getElementById('registerView').classList.add('hidden');
                 }).catch((error) => console.error("Erro ao sair:", error));
             });
             
