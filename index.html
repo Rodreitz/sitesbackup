@@ -161,8 +161,10 @@
                 </div>
             </div>
         </div>
-        <div id="legalContainer" class="hidden"></div>
     </div>
+    
+    <!-- Container para páginas legais (Termos, Privacidade, etc.) -->
+    <div id="legalContainer" class="hidden"></div>
 
     <div id="appView" class="hidden">
         <div class="relative min-h-screen md:flex">
@@ -197,6 +199,15 @@
                     </div>
                 </header>
                 <div id="main-content" class="flex-1 p-4 md:p-8 overflow-y-auto"></div>
+                <!-- NOVO: Rodapé adicionado dentro da visualização do app -->
+                <footer class="text-center p-4 text-sm text-gray-500 border-t border-gray-200">
+                    <p>&copy; 2024 - Arttes da Bel</p>
+                    <p class="mt-2 space-x-2">
+                        <a href="#terms" class="nav-link hover:underline">Termos de Serviço</a> &bull; 
+                        <a href="#privacy" class="nav-link hover:underline">Política de Privacidade</a> &bull;
+                        <a href="#support" class="nav-link hover:underline">Suporte</a>
+                    </p>
+                </footer>
             </div>
         </div>
     </div>
@@ -555,10 +566,24 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, fetchSignInMethodsForEmail, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+        // --- NOVO: Lógica de atualização do Service Worker ---
         if ('serviceWorker' in navigator) {
+            let refreshing;
+            // Ouve o evento 'controllerchange', que é disparado quando um novo SW assume o controle.
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                // Recarrega a página para aplicar a atualização.
+                window.location.reload();
+                refreshing = true;
+            });
+
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js').then(registration => {
                     console.log('ServiceWorker registado com sucesso: ', registration.scope);
+                    // Verifica por atualizações periodicamente (a cada hora).
+                    setInterval(() => {
+                        registration.update();
+                    }, 1000 * 60 * 60);
                 }, err => {
                     console.log('Registo do ServiceWorker falhou: ', err);
                 });
@@ -678,6 +703,7 @@
                                 atelierDataRef = doc(db, "atelierData", user.uid);
                                 piecesCollectionRef = collection(db, "atelierData", currentUser.uid, "pieces");
                                 authContainer.style.display = 'none';
+                                legalContainer.style.display = 'none';
                                 appView.style.display = 'block';
                                 
                                 const currentHash = window.location.hash;
@@ -696,8 +722,14 @@
                         signOut(auth);
                     });
                 } else {
+                    currentUser = null;
                     authContainer.style.display = 'block';
                     appView.style.display = 'none';
+                    // NOVO: Verifica se o hash é de uma página legal ao carregar deslogado
+                    const currentHash = window.location.hash.substring(1);
+                    if (['terms', 'privacy', 'support'].includes(currentHash)) {
+                        navigate(window.location.hash);
+                    }
                 }
             });
 
@@ -820,8 +852,7 @@
             document.getElementById('logoutButton').addEventListener('click', () => {
                 signOut(auth).then(() => {
                     window.location.hash = '';
-                    loginView.classList.remove('hidden');
-                    registerView.classList.add('hidden');
+                    window.location.reload(); // Recarrega para limpar o estado do app
                 }).catch((error) => console.error("Erro ao sair:", error));
             });
             
@@ -1091,6 +1122,7 @@
             }
 
             const mainContent = document.getElementById('main-content');
+            // --- ALTERADO: Adiciona os templates legais ao objeto de templates ---
             const templates = {
                 dashboard: document.getElementById('dashboard-template'),
                 calculator: document.getElementById('calculator-template'),
@@ -1098,11 +1130,47 @@
                 settings: document.getElementById('settings-template'),
                 management: document.getElementById('coming-soon-template'),
                 stock: document.getElementById('coming-soon-template'),
+                support: document.getElementById('support-template'),
+                terms: document.getElementById('terms-template'),
+                privacy: document.getElementById('privacy-template'),
             };
+
+            const legalPages = ['terms', 'privacy', 'support'];
 
             async function navigate(hash) {
                 const targetView = hash.substring(1) || 'dashboard';
                 
+                // --- NOVO: Lógica para exibir páginas legais mesmo quando deslogado ---
+                if (!currentUser && legalPages.includes(targetView)) {
+                    const template = templates[targetView];
+                    if (template) {
+                        authContainer.style.display = 'none';
+                        const backButton = document.createElement('button');
+                        backButton.innerHTML = '&larr; Voltar para o login';
+                        backButton.className = 'text-brand-primary hover:underline mb-4 block';
+                        backButton.onclick = () => {
+                            legalContainer.classList.add('hidden');
+                            authContainer.style.display = 'block';
+                            window.location.hash = '';
+                        };
+                        
+                        const contentWrapper = document.createElement('div');
+                        contentWrapper.appendChild(template.content.cloneNode(true));
+                        
+                        legalContainer.innerHTML = '';
+                        legalContainer.appendChild(backButton);
+                        legalContainer.appendChild(contentWrapper);
+                        legalContainer.classList.add('max-w-4xl', 'mx-auto', 'p-4', 'md:p-8');
+                        legalContainer.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                // Lógica de navegação padrão para quando o usuário está logado
+                if (!currentUser) return;
+                
+                legalContainer.classList.add('hidden');
+
                 document.querySelectorAll('.nav-link').forEach(link => {
                     link.classList.toggle('bg-brand-primary/20', link.hash === hash || (hash === '' && link.hash === '#dashboard'));
                 });
@@ -1222,13 +1290,15 @@
             const sidebarOverlay = document.getElementById('sidebar-overlay');
             
             window.addEventListener('hashchange', () => navigate(window.location.hash));
-            document.body.addEventListener('click', (e) => {
-                if (e.target.matches('.nav-link, .nav-link *')) {
-                    const link = e.target.closest('.nav-link');
-                    if(link.classList.contains('cursor-not-allowed')) return;
-                    e.preventDefault();
-                    window.location.hash = link.hash;
 
+            // --- ALTERADO: Event listener unificado para todos os links de navegação ---
+            document.body.addEventListener('click', (e) => {
+                const navLink = e.target.closest('.nav-link, .nav-link-legal');
+                if (navLink) {
+                    if (navLink.classList.contains('cursor-not-allowed')) return;
+                    e.preventDefault();
+                    window.location.hash = navLink.hash;
+                    
                     if (!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 768) {
                         sidebar.classList.add('-translate-x-full');
                         sidebarOverlay.classList.add('hidden');
