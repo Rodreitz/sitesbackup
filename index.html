@@ -2,6 +2,15 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
+                   script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://www.gstatic.com https://cdn.jsdelivr.net; 
+                   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; 
+                   font-src 'self' https://fonts.gstatic.com; 
+                   connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://www.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://firestore.googleapis.com; 
+                   img-src 'self' data:; 
+                   frame-src 'self' https://*.firebaseapp.com;">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Precificação Automática</title>
     <link rel="icon" type="image/png" href="/assets/logo.png">
@@ -163,7 +172,6 @@
         </div>
     </div>
     
-    <!-- Container para páginas legais (Termos, Privacidade, etc.) -->
     <div id="legalContainer" class="hidden"></div>
 
     <div id="appView" class="hidden">
@@ -199,7 +207,6 @@
                     </div>
                 </header>
                 <div id="main-content" class="flex-1 p-4 md:p-8 overflow-y-auto"></div>
-                <!-- NOVO: Rodapé adicionado dentro da visualização do app -->
                 <footer class="text-center p-4 text-sm text-gray-500 border-t border-gray-200">
                     <p>&copy; 2024 - Arttes da Bel</p>
                     <p class="mt-2 space-x-2">
@@ -228,7 +235,8 @@
                         <span class="flex p-2 rounded-lg bg-brand-bg">
                             <img class="h-6 w-6" src="/assets/logo.png" alt="Logo">
                         </span>
-                        <p class="ml-3 font-medium text-white truncate">
+                        <!-- ALTERAÇÃO 4: Removida a classe 'truncate' -->
+                        <p class="ml-3 font-medium text-white">
                             <span>Instale o app para uma melhor experiência!</span>
                         </p>
                     </div>
@@ -381,7 +389,11 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                                 Gerar Descrição
                             </button>
+                            <!-- ALTERAÇÃO 3: Adicionado botão de copiar -->
                             <div class="relative mt-4 p-4 bg-gray-50 rounded-md text-gray-700 min-h-[150px] border flex items-center justify-center">
+                                <button class="copy-ai-btn absolute top-2 right-2 p-1 text-gray-400 hover:text-brand-primary hidden" data-target="descriptionText">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                </button>
                                 <div id="descriptionLoader" class="loader hidden absolute"></div>
                                 <span id="descriptionText" class="text-center">✨ Clique em 'Gerar Descrição' e veja a mágica acontecer! Criaremos um texto de venda encantador para sua peça.</span>
                             </div>
@@ -392,7 +404,11 @@
                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.121-3.536a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM4.95 16.464l.707-.707a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414zm-3.536-2.121a1 1 0 010-1.414l.707-.707a1 1 0 011.414 1.414l-.707.707a1 1 0 01-1.414 0zM10 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1z" clip-rule="evenodd" /></svg>
                                 Gerar Ideias
                             </button>
+                            <!-- ALTERAÇÃO 3: Adicionado botão de copiar -->
                             <div class="relative mt-4 p-4 bg-gray-50 rounded-md text-gray-700 min-h-[150px] border flex items-center justify-center">
+                                <button class="copy-ai-btn absolute top-2 right-2 p-1 text-gray-400 hover:text-brand-primary hidden" data-target="suggestionsText">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                </button>
                                 <div id="suggestionsLoader" class="loader hidden absolute"></div>
                                 <span id="suggestionsText" class="text-center">💡 Sem inspiração? Clique em 'Gerar Ideias' para descobrir novas formas de divulgar e vender seu produto!</span>
                             </div>
@@ -566,13 +582,10 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile, fetchSignInMethodsForEmail, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // --- NOVO: Lógica de atualização do Service Worker ---
         if ('serviceWorker' in navigator) {
             let refreshing;
-            // Ouve o evento 'controllerchange', que é disparado quando um novo SW assume o controle.
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (refreshing) return;
-                // Recarrega a página para aplicar a atualização.
                 window.location.reload();
                 refreshing = true;
             });
@@ -580,7 +593,6 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js').then(registration => {
                     console.log('ServiceWorker registado com sucesso: ', registration.scope);
-                    // Verifica por atualizações periodicamente (a cada hora).
                     setInterval(() => {
                         registration.update();
                     }, 1000 * 60 * 60);
@@ -601,7 +613,6 @@
             const lastDismissed = localStorage.getItem('installPromptDismissed');
             const oneWeek = 7 * 24 * 60 * 60 * 1000;
             if (lastDismissed && (Date.now() - lastDismissed < oneWeek)) {
-                console.log('Convite de instalação já foi dispensado recentemente.');
                 return;
             }
             installModal.classList.remove('hidden');
@@ -611,8 +622,7 @@
             installModal.classList.add('hidden');
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to the install prompt: ${outcome}`);
+                await deferredPrompt.userChoice;
                 deferredPrompt = null;
             }
         });
@@ -651,6 +661,21 @@
                 button.classList.remove('btn-loading');
                 button.innerHTML = originalText;
             }
+        }
+
+        // NOVO: Função para copiar texto para a área de transferência
+        function copyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast('Texto copiado!', 'success');
+            } catch (err) {
+                showToast('Falha ao copiar o texto.', 'error');
+            }
+            document.body.removeChild(textArea);
         }
 
         async function getFirebaseConfig() {
@@ -725,7 +750,6 @@
                     currentUser = null;
                     authContainer.style.display = 'block';
                     appView.style.display = 'none';
-                    // NOVO: Verifica se o hash é de uma página legal ao carregar deslogado
                     const currentHash = window.location.hash.substring(1);
                     if (['terms', 'privacy', 'support'].includes(currentHash)) {
                         navigate(window.location.hash);
@@ -852,7 +876,7 @@
             document.getElementById('logoutButton').addEventListener('click', () => {
                 signOut(auth).then(() => {
                     window.location.hash = '';
-                    window.location.reload(); // Recarrega para limpar o estado do app
+                    window.location.reload(); 
                 }).catch((error) => console.error("Erro ao sair:", error));
             });
             
@@ -884,15 +908,18 @@
             });
 
             const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-            const callAIAssistant = async (dataPayload) => {
+            const callAIAssistant = async (dataPayload, button) => {
                 const proxyUrl = '/api/gemini-proxy';
+                const copyButton = button.nextElementSibling.querySelector('.copy-ai-btn');
                 try {
                     const response = await fetch(proxyUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dataPayload) });
                     if (!response.ok) throw new Error(`Erro: ${response.statusText}`);
                     const result = await response.json();
+                    copyButton.classList.remove('hidden');
                     return result.text;
                 } catch (error) {
                     console.error("Erro no assistente IA:", error);
+                    copyButton.classList.add('hidden');
                     return "Desculpe, não foi possível gerar a resposta no momento.";
                 }
             };
@@ -907,28 +934,58 @@
                 const addTaskBtn = calculatorNode.querySelector('#addTask');
 
                 const addMaterialRow = (name = '', price = '', quantity = '') => {
+                    const materialCount = materialsContainer.querySelectorAll('.material-row').length + 1;
                     const div = document.createElement('div');
-                    div.classList.add('relative', 'p-4', 'border', 'rounded-lg', 'space-y-2', 'pt-6', 'material-row');
+                    // ALTERAÇÃO 2: Adicionadas classes para o novo layout do item
+                    div.classList.add('relative', 'border', 'rounded-lg', 'material-row', 'overflow-hidden');
                     div.innerHTML = `
-                        <button class="remove-btn absolute top-2 right-2 text-red-400 hover:text-red-600 font-bold text-2xl">&times;</button>
-                        <div class="w-full"> <label class="text-sm font-medium text-brand-text">Nome do Material</label> <p class="text-xs text-gray-500 mt-1">Ex: Tecido Tricoline, Linha, Zíper.</p> <input type="text" value="${name}" class="material-name piece-input w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div> <label class="text-sm font-medium text-brand-text">Preço</label> <p class="text-xs text-gray-500 mt-1">Preço do item comprado (metro, unidade).</p> <div class="relative mt-1 input-group"> <span class="input-prefix text-sm">R$</span> <input type="text" value="${price}" inputmode="decimal" placeholder="30,00" class="numeric-input piece-input material-price w-full p-2 border border-gray-200 rounded-md text-sm"> </div> </div>
-                            <div> <label class="text-sm font-medium text-brand-text">Qtd. Usada</label> <p class="text-xs text-gray-500 mt-1">Fração usada (ex: 0.45 para 45cm).</p> <input type="text" value="${quantity}" inputmode="decimal" placeholder="0,45" class="numeric-input piece-input material-quantity w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
+                        <div class="flex justify-between items-center bg-brand-bg/60 p-2">
+                            <h4 class="font-bold text-brand-text">Material ${materialCount}</h4>
+                            <button class="remove-btn text-red-400 hover:text-red-600 font-bold text-2xl leading-none px-2">&times;</button>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <div class="w-full"> <label class="text-sm font-medium text-brand-text">Nome do Material</label> <p class="text-xs text-gray-500 mt-1">Ex: Tecido Tricoline, Linha, Zíper.</p> <input type="text" value="${name}" class="material-name piece-input w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div> <label class="text-sm font-medium text-brand-text">Preço</label> <p class="text-xs text-gray-500 mt-1">Preço do item comprado (metro, unidade).</p> <div class="relative mt-1 input-group"> <span class="input-prefix text-sm">R$</span> <input type="text" value="${price}" inputmode="decimal" placeholder="30,00" class="numeric-input piece-input material-price w-full p-2 border border-gray-200 rounded-md text-sm"> </div> </div>
+                                <div> <label class="text-sm font-medium text-brand-text">Qtd. Usada</label> <p class="text-xs text-gray-500 mt-1">Fração usada (ex: 0.45 para 45cm).</p> <input type="text" value="${quantity}" inputmode="decimal" placeholder="0,45" class="numeric-input piece-input material-quantity w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
+                            </div>
                         </div>`;
                     materialsContainer.appendChild(div);
-                    div.querySelector('.remove-btn').addEventListener('click', () => { div.remove(); calculateAll(); savePieceToLocalStorage(); });
+                    div.querySelector('.remove-btn').addEventListener('click', () => { 
+                        div.remove(); 
+                        // Renumera os itens restantes
+                        materialsContainer.querySelectorAll('.material-row').forEach((row, index) => {
+                            row.querySelector('h4').textContent = `Material ${index + 1}`;
+                        });
+                        calculateAll(); 
+                        savePieceToLocalStorage(); 
+                    });
                 };
 
                 const addTaskRow = (name = '', time = '') => {
+                    const taskCount = tasksContainer.querySelectorAll('.task-row').length + 1;
                     const div = document.createElement('div');
-                    div.classList.add('relative', 'p-4', 'border', 'rounded-lg', 'space-y-2', 'pt-6', 'task-row');
+                    // ALTERAÇÃO 2: Adicionadas classes para o novo layout do item
+                    div.classList.add('relative', 'border', 'rounded-lg', 'task-row', 'overflow-hidden');
                     div.innerHTML = `
-                        <button class="remove-btn absolute top-2 right-2 text-red-400 hover:text-red-600 font-bold text-2xl">&times;</button>
-                        <div class="w-full"> <label class="text-sm font-medium text-brand-text">Nome da Tarefa</label> <p class="text-xs text-gray-500 mt-1">Ex: Cortar, Costurar, Acabamento.</p> <input type="text" value="${name}" class="task-name piece-input w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
-                        <div> <label class="text-sm font-medium text-brand-text">Tempo (minutos)</label> <p class="text-xs text-gray-500 mt-1">Quanto tempo levou nesta tarefa.</p> <input type="text" value="${time}" inputmode="decimal" placeholder="40" class="numeric-input piece-input task-time w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>`;
+                        <div class="flex justify-between items-center bg-brand-bg/60 p-2">
+                            <h4 class="font-bold text-brand-text">Tarefa ${taskCount}</h4>
+                            <button class="remove-btn text-red-400 hover:text-red-600 font-bold text-2xl leading-none px-2">&times;</button>
+                        </div>
+                        <div class="p-4 space-y-2">
+                            <div class="w-full"> <label class="text-sm font-medium text-brand-text">Nome da Tarefa</label> <p class="text-xs text-gray-500 mt-1">Ex: Cortar, Costurar, Acabamento.</p> <input type="text" value="${name}" class="task-name piece-input w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
+                            <div> <label class="text-sm font-medium text-brand-text">Tempo (minutos)</label> <p class="text-xs text-gray-500 mt-1">Quanto tempo levou nesta tarefa.</p> <input type="text" value="${time}" inputmode="decimal" placeholder="40" class="numeric-input piece-input task-time w-full p-2 mt-1 border border-gray-200 rounded-md text-sm"> </div>
+                        </div>`;
                     tasksContainer.appendChild(div);
-                    div.querySelector('.remove-btn').addEventListener('click', () => { div.remove(); calculateAll(); savePieceToLocalStorage(); });
+                    div.querySelector('.remove-btn').addEventListener('click', () => { 
+                        div.remove(); 
+                        // Renumera os itens restantes
+                        tasksContainer.querySelectorAll('.task-row').forEach((row, index) => {
+                            row.querySelector('h4').textContent = `Tarefa ${index + 1}`;
+                        });
+                        calculateAll(); 
+                        savePieceToLocalStorage(); 
+                    });
                 };
 
                 addMaterialBtn.addEventListener('click', () => addMaterialRow());
@@ -999,7 +1056,8 @@
                 observer.observe(materialsContainer, { childList: true });
                 observer.observe(tasksContainer, { childList: true });
                 
-                calculatorNode.querySelector('#generateDescription').addEventListener('click', async () => {
+                calculatorNode.querySelector('#generateDescription').addEventListener('click', async (e) => {
+                    const button = e.currentTarget;
                     const pieceName = calculatorNode.querySelector('#pieceName').value || "uma peça de artesanato";
                     const materials = Array.from(calculatorNode.querySelectorAll('.material-name')).map(input => input.value).filter(Boolean);
                     const finalPrice = calculatorNode.querySelector('#finalPrice').textContent;
@@ -1007,14 +1065,15 @@
                     const dataPayload = { type: 'description', pieceName, materials, finalPrice };
                     calculatorNode.querySelector('#descriptionLoader').classList.remove('hidden');
                     calculatorNode.querySelector('#descriptionText').classList.add('hidden');
-                    const resultText = await callAIAssistant(dataPayload);
+                    const resultText = await callAIAssistant(dataPayload, button);
                     calculatorNode.querySelector('#descriptionText').textContent = resultText;
                     calculatorNode.querySelector('#descriptionText').classList.remove('text-center', 'hidden');
                     calculatorNode.querySelector('#descriptionText').classList.add('text-left', 'whitespace-pre-wrap');
                     calculatorNode.querySelector('#descriptionLoader').classList.add('hidden');
                 });
 
-                calculatorNode.querySelector('#generateSuggestions').addEventListener('click', async () => {
+                calculatorNode.querySelector('#generateSuggestions').addEventListener('click', async (e) => {
+                    const button = e.currentTarget;
                     const pieceName = calculatorNode.querySelector('#pieceName').value || "uma peça de artesanato";
                     const materials = Array.from(calculatorNode.querySelectorAll('.material-name')).map(input => input.value).filter(Boolean);
                     const totalTime = calculatorNode.querySelector('#totalTime').textContent;
@@ -1023,7 +1082,7 @@
                     const dataPayload = { type: 'suggestions', pieceName, materials, totalTime, finalPrice };
                     calculatorNode.querySelector('#suggestionsLoader').classList.remove('hidden');
                     calculatorNode.querySelector('#suggestionsText').classList.add('hidden');
-                    const resultText = await callAIAssistant(dataPayload);
+                    const resultText = await callAIAssistant(dataPayload, button);
                     calculatorNode.querySelector('#suggestionsText').textContent = resultText;
                     calculatorNode.querySelector('#suggestionsText').classList.remove('text-center', 'hidden');
                     calculatorNode.querySelector('#suggestionsText').classList.add('text-left', 'whitespace-pre-wrap');
@@ -1044,21 +1103,20 @@
                     if (savedData) {
                         restoreBanner.classList.remove('hidden');
                     } else {
+                        // ALTERAÇÃO 1: Não adiciona mais itens por padrão
                         materialsContainer.innerHTML = '';
                         tasksContainer.innerHTML = '';
-                        addMaterialRow();
-                        addTaskRow();
                     }
                 }
 
                 function loadPieceData(data) {
                     calculatorNode.querySelector('#pieceName').value = data.pieceName || '';
                     calculatorNode.querySelector('#profitMargin').value = data.profitMargin || '100';
-                    calculatorNode.querySelector('#fees').value = data.fees || '5';
+                    calculatorNode.querySelector('#fees').value = data.fees || '0';
                     materialsContainer.innerHTML = '';
                     tasksContainer.innerHTML = '';
-                    data.materials.forEach(m => addMaterialRow(m.name, m.price, m.quantity));
-                    data.tasks.forEach(t => addTaskRow(t.name, t.time));
+                    if (data.materials) data.materials.forEach(m => addMaterialRow(m.name, m.price, m.quantity));
+                    if (data.tasks) data.tasks.forEach(t => addTaskRow(t.name, t.time));
                     calculateAll();
                 }
 
@@ -1076,8 +1134,6 @@
                     restoreBanner.classList.add('hidden');
                     materialsContainer.innerHTML = '';
                     tasksContainer.innerHTML = '';
-                    addMaterialRow();
-                    addTaskRow();
                 });
 
                 calculatorNode.addEventListener('input', (e) => {
@@ -1119,10 +1175,21 @@
                 } else {
                     checkAndRestorePiece();
                 }
+
+                // Event listener para os botões de copiar
+                calculatorNode.addEventListener('click', (e) => {
+                    const copyBtn = e.target.closest('.copy-ai-btn');
+                    if (copyBtn) {
+                        const targetId = copyBtn.dataset.target;
+                        const textElement = document.getElementById(targetId);
+                        if (textElement) {
+                            copyToClipboard(textElement.textContent);
+                        }
+                    }
+                });
             }
 
             const mainContent = document.getElementById('main-content');
-            // --- ALTERADO: Adiciona os templates legais ao objeto de templates ---
             const templates = {
                 dashboard: document.getElementById('dashboard-template'),
                 calculator: document.getElementById('calculator-template'),
@@ -1140,7 +1207,6 @@
             async function navigate(hash) {
                 const targetView = hash.substring(1) || 'dashboard';
                 
-                // --- NOVO: Lógica para exibir páginas legais mesmo quando deslogado ---
                 if (!currentUser && legalPages.includes(targetView)) {
                     const template = templates[targetView];
                     if (template) {
@@ -1166,7 +1232,6 @@
                     return;
                 }
 
-                // Lógica de navegação padrão para quando o usuário está logado
                 if (!currentUser) return;
                 
                 legalContainer.classList.add('hidden');
@@ -1291,7 +1356,6 @@
             
             window.addEventListener('hashchange', () => navigate(window.location.hash));
 
-            // --- ALTERADO: Event listener unificado para todos os links de navegação ---
             document.body.addEventListener('click', (e) => {
                 const navLink = e.target.closest('.nav-link, .nav-link-legal');
                 if (navLink) {
